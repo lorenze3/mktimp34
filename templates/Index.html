@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>Measuring Marketing Impact</title>
+ 
+ 
+    <!--<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link href="http://getbootstrap.com/docs/4.1/examples/jumbotron/jumbotron.css" rel="stylesheet">
+ 
+ 
+</head>
+ 
+<body>
+ 
+    <div class="container">
+        <div class="header">
+            <!--<nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="#">Home  </a>
+                    </li>
+                    <li role="presentation"><a href="#">Sign In  </a>
+                    </li>
+                    <li role="presentation"><a href="showSignUp">Sign Up  </a>
+                    </li>
+                </ul>
+            </nav>-->
+			<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+			  <a class="navbar-brand" href="#"></a>
+			  <button class="navbar-toggler" aria-expanded="false" aria-controls="navbarsExampleDefault" aria-label="Toggle navigation" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault">
+				<span class="navbar-toggler-icon"></span>
+			  </button>
+
+			  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+				  <li class="nav-item active">
+					<a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="showSignup">Sign Up</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="showSignin">Sign In</a>
+				  </li>
+				</ul>
+			  </div>
+			</nav>
+            <h3 class="text-muted"></h3>
+        </div>
+ 
+        <div class="jumbotron">
+            <h1>Measuring Marketing Impact</h1>
+            <p class="lead"></p>
+            <p><a class="btn btn-lg btn-success" href="showSignup" role="button">Try it now!</a>
+            </p>
+        </div>
+ 
+        <div class="row marketing">
+            <div class="col-lg-6">
+                <h4>No Touch Marketing Measurement</h4>
+                <p>Marketing measurement needs to be seamless and low effort for full integration into the Planning-Execution-Optimization cycle.  
+				This app is a prototype for what that looks like</p>
+ 
+                <h4>Real Marketing Mix Models</h4>
+                <p>This app runs real marketing mix models, identifying the best model from a range of technical indicators and heuristics.  It then applies the champion model to decompose the target variable and produces a simple, interactive dashboard. </p>
+ 
+                <h4>This is Just a Start</h4>
+                <p>To be a complete marketing measurement tool the app needs a few things:</p>
+				<ul type='disc'>
+				<li> More Power -- graduating from a single instance on free tier Azure gives the app enough compute to try many more models on larger data.</li>
+				<li> ROIs -- Integrating costs into the dashboard KPIs </li>
+				<li> Response Functions -- To feed optimizations producing profit maximizing allocations</li> 
+				</ul>
+            </div>
+ 
+            <div class="col-lg-6">
+                <h4>Technologies</h4>
+                <p>Built in Flask, deployed to Azure as a webapp with an intergrated MySQL.  Python's scikit learn is the modeling engine; Plotly is used for visualization</p>
+ 
+                <h4>Learning How -- Invaluable Tutorials</h4>
+                <p><a href= "https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world">miguelgrinberg.com</a></p>
+                <p><a href= "https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql--cms-22972">envatoTUTs+</a></p> 
+                <h4>Have Questions?  Reach out!</h4>
+                <p><a href="mailto:notouchmarketingmeasurementapp@gmail.com">Email the Author</a> </p>
+            </div>
+        </div>
+ 
+        <footer class="footer">
+        <p>&copy; Ted Lorenzen 2018</p>
+      </footer>
+ 
+    </div>
+</body>
+ 
+</html>

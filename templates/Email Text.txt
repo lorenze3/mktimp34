@@ -1,0 +1,24 @@
+Thanks for signing up!
+
+I'm excited to share a small prototype of marketing analytics 'as a service' I built to integrate my understandiing of cloud computing, web applications, and a variety of open source tools. 
+
+This webapp is designed to run a family models (a small family, in keeping with the constraints of the free tier Azure web app instance it lives on), intelligently choose the best model from that family using technical indicators and heuristics, and then return a decomposition of the target variable into the proposed driver variables.
+
+Although it comes pre-loaded with an example it is a real working modeling tool, and I encourage to try it on your own dataset.  The attached file is the example data already loaded; please use it as a template for how to enter your own data.
+
+Rules for your file:
+1)It must be comma delimited and it must have a .csv extension
+2)The first row should be names for all the columns.
+3)The second row contains the roles or groups for your variables.  Any dimension variables (sales channel, product name,etc) need to have a role ending in 'id'.  
+4)The last variable with an id role needs to have the role 'tid' for time id and should be the time dimension.
+5)The target variable role is 'dependent'.
+6)All other variables can have any role name you like.  Role names for causal variables (any non-id variable) will become the buckets for the model decomposition displayed on the dashboard.
+7)The third row list transformations you wish to apply to the variables.  Allowed values are 'log' (natural log), 'logmc'(natural log with mean centering),'mc' (mean centering), 'adstock' (for media variables in a marketing mix using a retention of 50% between subsequent time id values), and none.
+8)The fourth row lists sign constraints (if any) for causal variables.  Allowed values are '+', '-', and 'none'.
+9)The file name will be used to title the dashboard and to label the results in your results list.  It cannot contain '_' or special characters.
+
+Re-reading that, this looks complicated, but if you follow the template and give it a try I think you'll find it's easier than other modeling tools you've used.
+
+If you have any questions, just reply to this email.
+
+Regards, TL
