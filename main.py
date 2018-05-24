@@ -7,7 +7,7 @@ import mysql.connector
 import uuid
 import time
 import Mailer
-import MkTransforms
+import MKTransforms
 import numpy
 import pandas as pd
 import plotly2json
