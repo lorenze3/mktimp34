@@ -49,7 +49,7 @@ def signUp():
         if _name and _email and _password:
             # All Good, let's call MySQL
             conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                              host='127.0.0.1',port=54010,
+                              host='127.0.0.1',port=55302,
                               database='BucketList',autocommit=True)
             cursor = conn.cursor()
             _hashed_password = generate_password_hash(_password)
@@ -83,7 +83,7 @@ def validateLogin():
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
         conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                              host='127.0.0.1',port=54010,
+                              host='127.0.0.1',port=55302,
                                   database='BucketList')
         cursor = conn.cursor()
         cursor.callproc('sp_validateLogin',(_username,))
@@ -112,7 +112,7 @@ def userHome():
         if session.get('user'):
             try:
                 conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                              host='127.0.0.1',port=54010,
+                              host='127.0.0.1',port=55302,
                                       database='BucketList')
                 cursor = conn.cursor()
                 querystring="Select data_filename from tbl_datafiles where user_id="+str(session.get('user'))+"&& data_resultsname IS NOT NULL;"
@@ -142,7 +142,7 @@ def userHome():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
         try:
             conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                              host='127.0.0.1',port=54010,
+                              host='127.0.0.1',port=55302,
                                   database='BucketList',autocommit=True)
             cursor = conn.cursor()
             cursor.callproc('sp_addinputD',(f_name,struid))
@@ -187,7 +187,7 @@ def logout():
         struid=session.get('user')
         try:
             conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                                              host='127.0.0.1',port=54010,
+                                              host='127.0.0.1',port=55302,
                                               database='BucketList',autocommit=True)
             cursor = conn.cursor()
             querystring2='update tbl_user set user_lastlogin = NOW() where user_id='+str(struid)+';'
