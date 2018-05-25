@@ -47,8 +47,6 @@ def signUp():
         _password = request.form['inputPassword']
         # validate the received values
         if _name and _email and _password:
-            if 'msg' in locals():
-                del msg
             # All Good, let's call MySQL
             conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
                               host='127.0.0.1',port=55302,
@@ -58,7 +56,7 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                msg=reg.fetchall()
-               return render_template('error.html',error=str(msg[0]))
+               return render_tempate('error.html',error=str(msg[0][0]))
             if not('msg' in locals()):
                 #conn.commit()
                 m.recipients=[_email]
@@ -73,8 +71,6 @@ def signUp():
     except Exception as e:
         return json.dumps({'error':str(e)})
     finally:
-        if 'msg' in locals():
-            del msg
         cursor.close() 
         conn.close()
         
