@@ -153,17 +153,17 @@ def userHome():
                 triggerModel=1
                 try:
                     rawdf=pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
-        				except Exception as e:
+                except Exception as e:
                     return render_template('error.html',error='csvread '+str(e))
                         #reate model data with user provied transforms
-        				try:
+                try:
                     depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
-        				except Exception as e:
+                except Exception as e:
                     return render_template('error.html',error='mktransforms '+str(e))
                         #run models and select best (altough first pass just runs one model, no sign constraint)
-        				try:
+                try:
                     intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
-        				except Exception as e:
+                except Exception as e:
                     return render_template('error.html',error='run models '+str(e))
                         #create decomps
                 try:
@@ -180,7 +180,7 @@ def userHome():
                 except Exception as e:
                     return render_template('error.html',error='elast calc '+str(e))
         				#make plotly dashboard
-        				try:
+                try:
                     figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
                 except Exception as e:
                     return render_template('error.html',error='create Dash '+str(e))
