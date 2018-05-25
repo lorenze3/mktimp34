@@ -58,7 +58,7 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                msg=reg.fetchall()
-               #return render_template('error.html',error=str(msg[0]))
+               return render_template('error.html',error=str(msg[0]))
             if not('msg' in locals()):
                 #conn.commit()
                 m.recipients=[_email]
