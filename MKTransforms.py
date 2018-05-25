@@ -305,6 +305,7 @@ def createDash(groupedDecomp,IDnames,rawdf,groups,elasts,fname):
     import plotly.graph_objs as go
     import math
     import os
+    from numpy import arange, r_, reshape
     import pandas as pd
     #for decomps over time id, remove dependent from df
     subGroupedDecomp=groupedDecomp.drop('dependent',axis=1)
