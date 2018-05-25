@@ -56,7 +56,7 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                msg=reg.fetchall()
-            if not('msg' in locals()) or msg[0]!="Username Exists !!":
+            if not('msg' in locals()):
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
