@@ -105,7 +105,7 @@ def MKTransforms(rawdf):
 def runModels(depV,IDnames,groups, knownSigns, origDep,datadf):
     from sklearn import linear_model
     import pandas as pd
-    from numpy import arange, r_, reshape as np
+    from numpy import arange, r_, reshape
     #get dependent
     #idxdep=[i for i,word in enumerate(groups) if word==('dependent')]
     #depV=rawdf.columns.values[idxdep].tolist()
