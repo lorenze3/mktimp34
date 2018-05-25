@@ -305,6 +305,7 @@ def createDash(groupedDecomp,IDnames,rawdf,groups,elasts,fname):
     import plotly.graph_objs as go
     import math
     import os
+    import pandas as pd
     #for decomps over time id, remove dependent from df
     subGroupedDecomp=groupedDecomp.drop('dependent',axis=1)
     #now use group by to get summed over all ids except time
