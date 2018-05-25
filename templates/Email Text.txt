@@ -1,10 +1,10 @@
 Thanks for signing up!
 
-I'm excited to share a small prototype of marketing analytics 'as a service' I built to integrate my understandiing of cloud computing, web applications, and a variety of open source tools. 
+I'm excited to share a small prototype of marketing analytics 'as a service' I built to integrate my understanding of cloud computing, web applications, and a variety of open source tools. 
 
 This webapp is designed to run a family models (a small family, in keeping with the constraints of the free tier Azure web app instance it lives on), intelligently choose the best model from that family using technical indicators and heuristics, and then return a decomposition of the target variable into the proposed driver variables.
 
-Although it comes pre-loaded with an example it is a real working modeling tool, and I encourage to try it on your own dataset.  The attached file is the example data already loaded; please use it as a template for how to enter your own data.
+Although it comes pre-loaded with an example it is a real working modeling tool, and I encourage you to try it on your own dataset.  The attached file is the example data already loaded; please use it as a template for how to enter your own data.
 
 Rules for your file:
 1)It must be comma delimited and it must have a .csv extension
@@ -21,4 +21,5 @@ Re-reading that, this looks complicated, but if you follow the template and give
 
 If you have any questions, just reply to this email.
 
-Regards, TL
+Regards, 
+TL

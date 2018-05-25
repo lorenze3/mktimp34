@@ -16,13 +16,13 @@ import plotly2json
 #create mailer object and go ahead and put in passwords for now . . .
 
 m=Mailer.Mailer()
-m.subject='How to use the No Touch Marketing Measurement webapp'
+m.subject='How to use the No Touch Marketing Measurement WebApp'
 m.send_from='notouchmarketingmeasurementapp@gmail.com'
 m.attachments =["static/downloads/Example.csv"]
 m.gmail_password='%like%me'
 with open('templates/Email text.txt', 'r') as myfile:
-  msg = myfile.read()
-m.message=msg
+  msg1 = myfile.read()
+m.message=msg1
 #end mailer setup.  
 
 #define flask server
@@ -56,8 +56,7 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                msg=reg.fetchall()
-            #if not('msg' in locals()):
-            if msg[0]!="Username Exists !!":
+            if not('msg' in locals()) or msg[0]!="Username Exists !!":
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
