@@ -56,14 +56,15 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                msg=reg.fetchall()
-            if not('msg' in locals()):
+            #if not('msg' in locals()):
+            if msg[0][0]!="Username Exists !!"
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
                 return render_template('signup.html', message="Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                 return render_template('error.html',error = 'Username already exists; Sign in or create new account.')
+                 return render_template('error.html',error = 'That email already has an account; Sign in or create new account.')
                  #return json.dumps({'error':str(msg[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
