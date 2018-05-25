@@ -47,6 +47,8 @@ def signUp():
         _password = request.form['inputPassword']
         # validate the received values
         if _name and _email and _password:
+            if 'msg' in locals():
+                del msg
             # All Good, let's call MySQL
             conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
                               host='127.0.0.1',port=55302,
