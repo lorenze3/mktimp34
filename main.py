@@ -55,7 +55,7 @@ def signUp():
             _hashed_password = generate_password_hash(_password)
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
-               msg=reg.fetchall()l
+               msg=reg.fetchall()
                #return render_template('error.html',error=str(msg[0][0]))
             #if not('msg' in locals()):
             if msg[0][0]=='New':
