@@ -57,7 +57,7 @@ def signUp():
             for reg in cursor.stored_results():
                msg=reg.fetchall()
             #if not('msg' in locals()):
-            if msg[0][0]!="Username Exists !!"
+            if msg[0][0]!="Username Exists !!":
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
