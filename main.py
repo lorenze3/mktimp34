@@ -56,21 +56,21 @@ def signUp():
             cursor = conn.cursor()
             _hashed_password = generate_password_hash(_password)
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-            for reg in cursor.stored_results():
-               msg=reg.fetchone()
             #return render_template('error.html',error=str(msg[0][0]))
-            if (not('msg' in locals()) or (str(msg[0]).strip() != 'User Exists !!')):
-            #if str(msg[0][0])=='New':
+            #if (not('msg' in locals()) or (str(msg[0]).strip() != 'User Exists !!')):
+            if cursor.with_rows:
+                for reg in cursor.stored_results():
+                    msg=reg.fetchone()
+                return render_template('error.html',error =str(msg[0]) +' Please sign in or create a new account with a different email address.')
+                #return json.dumps({'error':str(msg[0])})
+            else:
+                #if str(msg[0][0])=='New':
                 conn.commit()
                 m.recipients=[_email]
                 m.send_email()
-                if ('msg' in locals()):
-                    del msg
                 return render_template('signup.html', message="Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
                 #return json.dumps({'message':str(msg[0])})
-            else:
-                 return render_template('error.html',error =str(msg[0]) +' Please sign in or create a new account with a different email address.')
-                 #return json.dumps({'error':str(msg[0])})
+
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
