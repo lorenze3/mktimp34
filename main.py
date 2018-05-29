@@ -53,11 +53,11 @@ def signUp():
                               database='BucketList',autocommit=True)
             cursor = conn.cursor()
             _hashed_password = generate_password_hash(_password)
-            cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-            #return render_template('error.html',error=str(msg[0][0]))
-            #if (not('msg' in locals()) or (str(msg[0]).strip() != 'User Exists !!')):
-            for reg in cursor.stored_results():
-               msg=reg.fetchall()
+            #cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
+            cursor.execute('call sp_createUser(_name,_email,_hashed_password);')
+            #for reg in cursor.stored_results():
+               #msg=reg.fetchall()
+            msg=cursor.fetchone()
             if not('msg' in locals()):
                 #conn.commit()
                 m.recipients=[_email]
@@ -66,8 +66,7 @@ def signUp():
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                return redirect('/signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
-                #return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
+                return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
                  #return json.dumps({'error':str(msg[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
