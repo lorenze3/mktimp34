@@ -41,6 +41,8 @@ def showSignup():
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
+    if 'msg' in locals():
+        del msg
     try:
         _name = request.form['inputName']
         _email = request.form['inputEmail']
@@ -56,9 +58,9 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                msg=reg.fetchall()
-            return render_template('error.html',error=str(msg[0][0]))
-            #if not('msg' in locals()):
-            if msg[0][0]=='New':
+            #return render_template('error.html',error=str(msg[0][0]))
+            if not('msg' in locals()) or msg[0][0]!='User Exists !!':
+            #if str(msg[0][0])=='New':
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
@@ -150,7 +152,7 @@ def userHome():
             cursor.callproc('sp_addinputD',(f_name,struid))
             for rr in cursor.stored_results():
                 data=rr.fetchall()
-            if not('data' in locals()):
+            if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
                 #success!
                 triggerModel=1
                 try:
