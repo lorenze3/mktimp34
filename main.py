@@ -56,11 +56,12 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             for reg in cursor.stored_results():
                 msg=reg.fetchall()
-            cursor.close()
-            conn.close()
+            #cursor.close()
+            #conn.close()
             #msg=cursor.fetchone()
             #if not('msg' in locals()):
             if str(msg)!="None":
+            if not cursor.rowcount:
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
