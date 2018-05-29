@@ -66,7 +66,6 @@ def signUp():
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                del msg
                 return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
                  #return json.dumps({'error':str(msg[0])})
 
