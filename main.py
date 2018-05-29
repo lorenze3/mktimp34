@@ -60,7 +60,7 @@ def signUp():
             #if (not('msg' in locals()) or (str(msg[0]).strip() != 'User Exists !!')):
             for reg in cursor.stored_results():
                 msg=reg.fetchone()    
-            if ('msg' in locals()):
+            if ('msg' in locals() and str(msg[0]).strip()=='User Exists !!'):
                 return render_template('error.html',error =' Please sign in or create a new account with a different email address.')
                 #return json.dumps({'error':str(msg[0])})
             else:
