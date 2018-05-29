@@ -64,11 +64,11 @@ def signUp():
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
-                return render_template('signup.html', message="Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
-                #return json.dumps({'message':'User created successfully !'})
+                #return render_template('signup.html', message="Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
+                return json.dumps({'message':str(msg[0])})
             else:
-                 return render_template('error.html',error = 'That email already has an account; Sign in or create new account.')
-                 #return json.dumps({'error':str(msg[0])})
+                 #return render_template('error.html',error = 'That email already has an account; Sign in or create new account.')
+                 return json.dumps({'error':str(msg[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
