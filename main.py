@@ -59,7 +59,7 @@ def signUp():
             for reg in cursor.stored_results():
                msg=reg.fetchone()
             #return render_template('error.html',error=str(msg[0][0]))
-            if (not('msg' in locals()) or (msg[0].strip() != 'User Exists !!')):
+            if (not('msg' in locals()) or (str(msg[0]).strip() != 'User Exists !!')):
             #if str(msg[0][0])=='New':
                 conn.commit()
                 m.recipients=[_email]
