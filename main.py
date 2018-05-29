@@ -57,7 +57,8 @@ def signUp():
             #for reg in cursor.stored_results():
                #msg=reg.fetchall()
             msg=cursor.fetchone()
-            if not('msg' in locals()):
+            #if not('msg' in locals()):
+            if str(msg)!="None":
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
@@ -65,8 +66,8 @@ def signUp():
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                #return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
-                return json.dumps({'error':str(msg)})
+                return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
+                #return json.dumps({'error':str(msg)})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
