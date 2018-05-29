@@ -59,7 +59,7 @@ def signUp():
             msg=cursor.fetchone()
             #if not('msg' in locals()):
             #if str(msg)!="None":
-            if len(msg) is 0:
+            if msg is None:
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
