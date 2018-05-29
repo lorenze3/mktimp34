@@ -55,7 +55,8 @@ def signUp():
             _hashed_password = generate_password_hash(_password)
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
            # for reg in cursor.stored_results():
-            msg=reg.fetchone()
+                #msg=reg.fetchone()
+            msg=cursor.fetchone()
             #if not('msg' in locals()):
             #if str(msg)!="None":
             if len(msg) is 0:
