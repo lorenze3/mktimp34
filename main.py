@@ -63,7 +63,7 @@ def signUp():
                 for reg in cursor.stored_results():
                     msg=reg.fetchall()
                     
-                return render_template('error.html',error =str(msg[0]) +' Please sign in or create a new account with a different email address.')
+                return render_template('error.html',error =' Please sign in or create a new account with a different email address.')
                 #return json.dumps({'error':str(msg[0])})
             else:
                 #if str(msg[0][0])=='New':
@@ -78,8 +78,6 @@ def signUp():
     except Exception as e:
         return json.dumps({'error':str(e)})
     finally:
-        if ('msg' in locals()):
-            del msg
         cursor.close() 
         conn.close()
         
