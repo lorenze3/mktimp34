@@ -54,14 +54,11 @@ def signUp():
             cursor = conn.cursor()
             _hashed_password = generate_password_hash(_password)
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-            for reg in cursor.stored_results():
-                msg=reg.fetchall()
-            #cursor.close()
-            #conn.close()
-            #msg=cursor.fetchone()
+           # for reg in cursor.stored_results():
+            msg=reg.fetchone()
             #if not('msg' in locals()):
             #if str(msg)!="None":
-            if not cursor.rowcount:
+            if len(msg) is 0:
                 #conn.commit()
                 m.recipients=[_email]
                 m.send_email()
@@ -69,7 +66,7 @@ def signUp():
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                return render_template('signup.html',message = str(msg), message2= 'Sign in or create new account.')
+                return render_template('signup.html',message = str(msg[0]), message2= 'Sign in or create new account.')
                 #return json.dumps({'error':str(msg)})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
