@@ -53,8 +53,7 @@ def signUp():
                               database='BucketList',autocommit=True)
             cursor = conn.cursor()
             _hashed_password = generate_password_hash(_password)
-            #cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-            cursor.execute('call sp_createUser('+str(_name)+','+str(_email)+','+str(_hashed_password)+';')
+            cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             #for reg in cursor.stored_results():
                #msg=reg.fetchall()
             msg=cursor.fetchone()
