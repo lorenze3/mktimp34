@@ -65,8 +65,8 @@ def signUp():
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
-                 #return json.dumps({'error':str(msg[0])})
+                #return render_template('signup.html',message = 'Username already exists.', message2= 'Sign in or create new account.')
+                return json.dumps({'error':str(msg[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
