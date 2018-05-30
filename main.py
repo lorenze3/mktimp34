@@ -58,8 +58,8 @@ def signUp():
             cursor.execute(qstr)
             userrecord=cursor.fetchall()
             cursor.close()
-            return json.dumps({'output':userrecord})
-            if userrecord is None:
+            #return json.dumps({'output':userrecord})
+            if len(userrecord) == 0:
                 #add user to database and send email                            
                 cursor=conn.cursor()
                 cursor.callproc('sp_createUser',(_name,_email,_hashed_password))                
