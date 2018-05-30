@@ -54,7 +54,7 @@ def signUp():
             cursor = conn.cursor()
             _hashed_password = generate_password_hash(_password)
             #check for records with that username
-            qstr='select * from tbl_user where user_username='+str(_email)+';'
+            qstr='select * from tbl_user where user_username="'+str(_email)+'";'
             cursor.execute(qstr)
             userrecord=cursor.fetchall()
             cursor.close()
