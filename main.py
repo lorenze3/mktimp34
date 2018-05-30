@@ -58,7 +58,7 @@ def signUp():
             cursor.execute(qstr)
             userrecord=cursor.fetchall()
             cursor.close()
-            return json.dump({'output':userrecord})
+            return json.dumps({'output':userrecord})
             if userrecord is None:
                 #add user to database and send email                            
                 cursor=conn.cursor()
