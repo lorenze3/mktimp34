@@ -254,11 +254,10 @@ def upload():
         return render_template('error.html',error='it worked')#json.dumps({'filename':f_name})
 
 if __name__ == "__main__":
+    app.run()
     handler = RotatingFileHandler('Smarter.log', maxBytes=10000, backupCount=1) 
     handler.setLevel(logging.INFO) 
-    app.logger.addHandler(handler) 
-    app.run()
-    
+    app.logger.addHandler(handler)  
     
     
     
