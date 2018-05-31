@@ -65,6 +65,7 @@ def signUp():
                 conn.close()
                 #return json.dumps({'output':userrecord})
                 if len(userrecord) == 0:
+                    userrecord=[]
                     ur=userrecord
                     #add user to database and send email 
                     conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
