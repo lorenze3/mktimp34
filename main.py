@@ -73,6 +73,7 @@ def signUp():
                 #conn.close()
                 m.recipients=[_email]
                 m.send_email()
+                mt=""
                 messagetxt="Your account has been created!"
                 message2txt="An input template and instructions have been emailed to you."
                 message3txt="Please sign in to continue."
