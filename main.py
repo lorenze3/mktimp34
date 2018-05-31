@@ -60,10 +60,12 @@ def signUp():
                 qstr='select * from tbl_user where user_username="'+str(_email)+'";'
                 cursor.execute(qstr)
                 userrecord=cursor.fetchall()
+                ur2=userrecord
                 cursor.close()
                 conn.close()
                 #return json.dumps({'output':userrecord})
                 if len(userrecord) == 0:
+                    ur=userrecord
                     #add user to database and send email 
                     conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
                                   host='127.0.0.1',port=55302,
@@ -80,9 +82,9 @@ def signUp():
                     #return redirect('/showSignin')
                     #return json.dumps({'message':'User created successfully !'})
                 else:
-                    messagetxt="This email address already has an account"
-                    message2txt="Please sign in to continue."
-                    message3txt=" "
+                    messagetxt=str(ur)+"This email address already has an account"
+                    message2txt=str(userrecord)+"Please sign in to continue."
+                    message3txt=str(ur2)+" "
                     #print('now in else branch')
                     #conn.close()
                     #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
