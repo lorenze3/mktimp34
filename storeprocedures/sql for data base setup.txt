@@ -47,38 +47,7 @@ BEGIN
 END$$
 DELIMITER ;
 #or this one
-drop procedure if exists sp_createUser;
 
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(
-    IN p_name VARCHAR(45),
-    IN p_username VARCHAR(45),
-    IN p_password VARCHAR(500)
-)
-BEGIN
-    declare spid int;
-    set spid=1;
-
-    SELECT max(user_id) from tbl_user where user_username=p_username into spid;
-    IF ( spid>1)  then
-      select 'User Exists !!'  ;  
-	
-     Else
-       insert into tbl_user
-         (
-            user_name,
-            user_username,
-            user_password
-         )
-         values
-         (
-            p_name,
-            p_username,
-            p_password
-         ); 
-    End IF;
-   END$$
-DELIMITER ;
 
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validateLogin`(
