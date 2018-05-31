@@ -81,7 +81,7 @@ def signUp():
                 #print('now in else branch')
                 #conn.close()
                 #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
-            return render_template('signin.html', message=str(messagetxt),message2=str(message2txt),message3=str(message3txt))
+            return render_template('signin.html', message=str(messagetxt)+"W",message2=str(message2txt),message3=str(message3txt))
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
