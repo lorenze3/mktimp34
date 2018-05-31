@@ -85,7 +85,7 @@ def signUp():
                         mt= "This email address already has an account"
                     messagetxt=mt
                     message2txt=str(userrecord)+"Please sign in to continue."
-                    message3txt=str(ur2)+" "
+                    message3txt=" "
                     #print('now in else branch')
                     #conn.close()
                     #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
