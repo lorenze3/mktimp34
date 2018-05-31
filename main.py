@@ -53,7 +53,7 @@ def signUp():
                 # All Good, let's call MySQL
                 conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
                                   host='127.0.0.1',port=55302,
-                                  database='BucketList')
+                                  database='BucketList',autocommit=True)
                 cursor = conn.cursor()
                 _hashed_password = generate_password_hash(_password)
                 #check for records with that username
@@ -61,18 +61,15 @@ def signUp():
                 cursor.execute(qstr)
                 userrecord=cursor.fetchall()
                 cursor.close()
-                conn.close()
+                del cursor
                 #return json.dumps({'output':userrecord})
                 if len(userrecord) == 0:
                     userrecord=[]
                     ur=userrecord
                     #add user to database and send email 
-                   # conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                    #              host='127.0.0.1',port=55302,
-                    #              database='BucketList',autocommit=True)                           
-                    #cursor=conn.cursor()
-                    #cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
-                    #cursor.close()
+                    cursor2=conn.cursor()
+                    cursor2.callproc('sp_createUser',(_name,_email,_hashed_password))    
+                    cursor2.close()
                     #conn.close()
                     m.recipients=[_email]
                     m.send_email()
@@ -97,9 +94,9 @@ def signUp():
                 return json.dumps({'html':'<span>Enter the required fields</span>'})
         except Exception as e:
             return json.dumps({'error':str(e)})
-        #finally:
+        finally:
             #cursor.close() 
-            #conn.close()
+            conn.close()
         
 @app.route('/showSignin')
 def showSignin():
