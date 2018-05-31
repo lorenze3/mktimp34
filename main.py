@@ -65,7 +65,6 @@ def signUp():
                 #return json.dumps({'output':userrecord})
                 if len(userrecord) == 0:
                     userrecord=[]
-                    ur=userrecord
                     #add user to database and send email 
                     cursor2=conn.cursor()
                     cursor2.callproc('sp_createUser',(_name,_email,_hashed_password))    
@@ -77,20 +76,12 @@ def signUp():
                     messagetxt="Your account has been created!"
                     message2txt="An input template and instructions have been emailed to you."
                     message3txt="Please sign in to continue."
-                    #return redirect('/showSignin')
-                    #return json.dumps({'message':'User created successfully !'})
+                    return render_template('signin.html', message=str(messagetxt),message2=str(message2txt),message3=str(message3txt))
                 else:
-                    if 'ur' in locals():
-                        mt=str(ur)+"This email address already has an account"
-                    else:
-                        mt= "This email address already has an account"
-                    messagetxt=mt
+                    mt= "This email address already has an account"
                     message2txt=str(userrecord)+"Please sign in to continue."
                     message3txt=" "
-                    #print('now in else branch')
-                    #conn.close()
-                    #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
-                return render_template('signin.html', message=str(mt),message2=str(message2txt),message3=str(message3txt))
+                    return render_template('signin.html', message=str(mt),message2=str(message2txt),message3=str(message3txt))
             else:
                 return json.dumps({'html':'<span>Enter the required fields</span>'})
         except Exception as e:
