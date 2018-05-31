@@ -60,7 +60,6 @@ def signUp():
                 qstr='select * from tbl_user where user_username="'+str(_email)+'";'
                 cursor.execute(qstr)
                 userrecord=cursor.fetchall()
-                ur2=userrecord
                 cursor.close()
                 conn.close()
                 #return json.dumps({'output':userrecord})
@@ -68,13 +67,13 @@ def signUp():
                     userrecord=[]
                     ur=userrecord
                     #add user to database and send email 
-                    conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                                  host='127.0.0.1',port=55302,
-                                  database='BucketList',autocommit=True)                           
-                    cursor=conn.cursor()
-                    cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
-                    cursor.close()
-                    conn.close()
+                   # conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
+                    #              host='127.0.0.1',port=55302,
+                    #              database='BucketList',autocommit=True)                           
+                    #cursor=conn.cursor()
+                    #cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
+                    #cursor.close()
+                    #conn.close()
                     m.recipients=[_email]
                     m.send_email()
                     messagetxt="Your account has been created!"
@@ -93,7 +92,7 @@ def signUp():
                     #print('now in else branch')
                     #conn.close()
                     #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
-                return render_template('signin.html', message=str(userrecord)+ str(messagetxt),message2=str(message2txt),message3=str(message3txt))
+                return render_template('signin.html', message=str(mt),message2=str(message2txt),message3=str(message3txt))
             else:
                 return json.dumps({'html':'<span>Enter the required fields</span>'})
         except Exception as e:
