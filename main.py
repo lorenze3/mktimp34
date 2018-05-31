@@ -43,56 +43,57 @@ def showSignup():
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
-    try:
-        _name = request.form['inputName']
-        _email = request.form['inputEmail']
-        _password = request.form['inputPassword']
-        # validate the received values
-        if _name and _email and _password:
-            # All Good, let's call MySQL
-            conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                              host='127.0.0.1',port=55302,
-                              database='BucketList')
-            cursor = conn.cursor()
-            _hashed_password = generate_password_hash(_password)
-            #check for records with that username
-            qstr='select * from tbl_user where user_username="'+str(_email)+'";'
-            cursor.execute(qstr)
-            userrecord=cursor.fetchall()
-            cursor.close()
-            conn.close()
-            #return json.dumps({'output':userrecord})
-            if len(userrecord) == 0:
-                #add user to database and send email 
+    if request.method == 'POST':
+        try:
+            _name = request.form['inputName']
+            _email = request.form['inputEmail']
+            _password = request.form['inputPassword']
+            # validate the received values
+            if _name and _email and _password:
+                # All Good, let's call MySQL
                 conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                              host='127.0.0.1',port=55302,
-                              database='BucketList',autocommit=True)                           
-                cursor=conn.cursor()
-                cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
+                                  host='127.0.0.1',port=55302,
+                                  database='BucketList')
+                cursor = conn.cursor()
+                _hashed_password = generate_password_hash(_password)
+                #check for records with that username
+                qstr='select * from tbl_user where user_username="'+str(_email)+'";'
+                cursor.execute(qstr)
+                userrecord=cursor.fetchall()
                 cursor.close()
                 conn.close()
-                m.recipients=[_email]
-                m.send_email()
-                messagetxt="Your account has been created!"
-                message2txt="An input template and instructions have been emailed to you."
-                message3txt="Please sign in to continue."
-                #return redirect('/showSignin')
-                #return json.dumps({'message':'User created successfully !'})
+                #return json.dumps({'output':userrecord})
+                if len(userrecord) == 0:
+                    #add user to database and send email 
+                    conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
+                                  host='127.0.0.1',port=55302,
+                                  database='BucketList',autocommit=True)                           
+                    cursor=conn.cursor()
+                    cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
+                    cursor.close()
+                    conn.close()
+                    m.recipients=[_email]
+                    m.send_email()
+                    messagetxt="Your account has been created!"
+                    message2txt="An input template and instructions have been emailed to you."
+                    message3txt="Please sign in to continue."
+                    #return redirect('/showSignin')
+                    #return json.dumps({'message':'User created successfully !'})
+                else:
+                    messagetxt="This email address already has an account"
+                    message2txt="Please sign in to continue."
+                    message3txt=" "
+                    #print('now in else branch')
+                    #conn.close()
+                    #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
+                return render_template('signin.html', message=str(messagetxt),message2=str(message2txt),message3=str(message3txt))
             else:
-                messagetxt="This email address already has an account"
-                message2txt="Please sign in to continue."
-                message3txt=" "
-                #print('now in else branch')
-                #conn.close()
-                #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
-            return render_template('signin.html', message=str(messagetxt),message2=str(message2txt),message3=str(message3txt))
-        else:
-            return json.dumps({'html':'<span>Enter the required fields</span>'})
-    except Exception as e:
-        return json.dumps({'error':str(e)})
-    #finally:
-        #cursor.close() 
-        #conn.close()
+                return json.dumps({'html':'<span>Enter the required fields</span>'})
+        except Exception as e:
+            return json.dumps({'error':str(e)})
+        #finally:
+            #cursor.close() 
+            #conn.close()
         
 @app.route('/showSignin')
 def showSignin():
