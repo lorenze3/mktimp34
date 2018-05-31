@@ -11,6 +11,8 @@ import MKTransforms
 import numpy
 import pandas as pd
 import plotly2json
+import logging 
+from logging.handlers import RotatingFileHandler 
 
 
 #create mailer object and go ahead and put in passwords for now . . .
@@ -57,6 +59,7 @@ def signUp():
             qstr='select * from tbl_user where user_username="'+str(_email)+'";'
             cursor.execute(qstr)
             userrecord=cursor.fetchall()
+            app.logger.info('UserRecord on signUp Check: '+str(userrecord))
             cursor.close()
             #return json.dumps({'output':userrecord})
             if len(userrecord) == 0:
@@ -154,6 +157,7 @@ def userHome():
             cursor.callproc('sp_addinputD',(f_name,struid))
             for rr in cursor.stored_results():
                 data=rr.fetchall()
+            app.logger.info('data record on upload check: '+str(data))
             if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
                 #success!
                 triggerModel=1
@@ -250,6 +254,9 @@ def upload():
         return render_template('error.html',error='it worked')#json.dumps({'filename':f_name})
 
 if __name__ == "__main__":
+    handler = RotatingFileHandler('Smarter.log', maxBytes=10000, backupCount=1) 
+    handler.setLevel(logging.INFO) 
+    app.logger.addHandler(handler) 
     app.run()
     
     
