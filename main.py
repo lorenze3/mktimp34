@@ -64,22 +64,25 @@ def signUp():
             if len(userrecord) == 0:
                 #add user to database and send email                            
                 cursor=conn.cursor()
-                cursor.callproc('sp_createUser',(_name,_email,_hashed_password))                
+                cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
+                cursor.close()
+                conn.close()
                 m.recipients=[_email]
                 m.send_email()
                 return render_template('signup.html', message=str(userrecord)+" Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                return render_template('signup.html',message = "This email address already has an account!", message2= 'Sign in or create new account.')
+                conn.close()
+                return render_template('signup.html',message =str(userrecord)+" This email address already has an account!", message2= 'Sign in or create new account.')
                 #return json.dumps({'error':str(msg)})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
         return json.dumps({'error':str(e)})
-    finally:
-        cursor.close() 
-        conn.close()
+    #finally:
+        #cursor.close() 
+        #conn.close()
         
 @app.route('/showSignin')
 def showSignin():
