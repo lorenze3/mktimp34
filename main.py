@@ -69,12 +69,12 @@ def signUp():
                 conn.close()
                 m.recipients=[_email]
                 m.send_email()
-                return render_template('signup.html', message=str(userrecord)+" Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
+                return render_template('signin.html', message="Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
                 conn.close()
-                return render_template('signup.html',message =str(userrecord)+" This email address already has an account!", message2= 'Sign in or create new account.')
+                return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
                 #return json.dumps({'error':str(msg)})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
