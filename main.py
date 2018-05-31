@@ -63,6 +63,7 @@ def signUp():
             #return json.dumps({'output':userrecord})
             if len(userrecord) == 0:
                 print('starting sp_createuser')
+                logging.info(str(userrecord))
                 #add user to database and send email                            
                 cursor=conn.cursor()
                 cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
@@ -75,9 +76,10 @@ def signUp():
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                print('now in else branch')
-                conn.close()
-                return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
+                pass
+                #print('now in else branch')
+                #conn.close()
+                #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
                 #return json.dumps({'error':str(msg)})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
@@ -258,7 +260,7 @@ def upload():
         return render_template('error.html',error='it worked')#json.dumps({'filename':f_name})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
     
     
     
