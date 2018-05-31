@@ -62,8 +62,6 @@ def signUp():
             cursor.close()
             #return json.dumps({'output':userrecord})
             if len(userrecord) == 0:
-                print('starting sp_createuser')
-                logging.info(str(userrecord))
                 #add user to database and send email                            
                 cursor=conn.cursor()
                 cursor.callproc('sp_createUser',(_name,_email,_hashed_password))    
@@ -71,16 +69,20 @@ def signUp():
                 conn.close()
                 m.recipients=[_email]
                 m.send_email()
-                print('email sent')
-                return render_template('signin.html', message="Your account has been created!",message2="An input template and instructions have been emailed to you.",message3="Please sign in to continue.")
+                messagetxt="Your account has been created!"
+                message2txt="An input template and instructions have been emailed to you."
+                message3txt="Please sign in to continue."
                 #return redirect('/showSignin')
                 #return json.dumps({'message':'User created successfully !'})
             else:
-                pass
+                messagetxt="This email address already has an account"
+                message2txt="Please sign in to continue."
+                message3txt=""
                 #print('now in else branch')
                 #conn.close()
                 #return render_template('signup.html',message ="This email address already has an account!", message2= 'Sign in or create new account.')
                 #return json.dumps({'error':str(msg)})
+            return render_template('signin.html', message=messagetxt,message2=message2txt,message3=message3txt)
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
     except Exception as e:
