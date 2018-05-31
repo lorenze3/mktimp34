@@ -82,7 +82,11 @@ def signUp():
                     #return redirect('/showSignin')
                     #return json.dumps({'message':'User created successfully !'})
                 else:
-                    messagetxt=str(ur)+"This email address already has an account"
+                    if 'ur' in locals():
+                        mt=str(ur)+"This email address already has an account"
+                    else:
+                        mt= "This email address already has an account"
+                    messagetxt=mt
                     message2txt=str(userrecord)+"Please sign in to continue."
                     message3txt=str(ur2)+" "
                     #print('now in else branch')
