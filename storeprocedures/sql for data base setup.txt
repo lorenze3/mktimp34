@@ -28,6 +28,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(
     IN p_password VARCHAR(500)
 )
 BEGIN
+	declare thisnewuid BIGINT;
     IF ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
         select 'Username Exists !!';
     ELSE
@@ -43,11 +44,43 @@ BEGIN
             p_username,
             p_password
         );
+		set thisnewuid = (select max(user_id) from tbl_user);
+		insert into tbl_datafiles
+		(user_id,data_filename,data_resultsname,data_ts)
+		values
+		(thisnewuid, "12_Example.csv","static/Uploads\12_Exampleresults.json",now())
+		;
     END IF;
 END$$
 DELIMITER ;
-#or this one
+#before it autoloads the example
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(
+    IN p_name VARCHAR(45),
+    IN p_username VARCHAR(45),
+    IN p_password VARCHAR(500)
+)
+BEGIN
 
+    IF ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
+        select 'Username Exists !!';
+    ELSE
+        insert into tbl_user
+        (
+            user_name,
+            user_username,
+            user_password
+        )
+        values
+        (
+            p_name,
+            p_username,
+            p_password
+        );
+
+    END IF;
+END$$
+DELIMITER ;
 
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validateLogin`(

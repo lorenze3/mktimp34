@@ -1,0 +1,14 @@
+# Bash
+az webapp create --resource-group firstResourceGroup --plan firstAppServicePlan --name mktimpwebapp --runtime "python|3.4" --deployment-local-git
+
+
+git remote add azure https://github.com/user/repo.git https://TWL@mktimpwebapp.scm.azurewebsites.net/mktimpwebapp.git
+
+
+Get-AzureRmWebAppPublishingProfile -ResourceGroupName firstResourceGroup -Name mktimpwebapp -OutputFile creds.xml -Format WebDeploy
+--find-links wheelhouse
+
+
+pandas
+numpy
+plotly	
