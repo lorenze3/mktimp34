@@ -55,47 +55,50 @@ def MKTransforms(rawdf):
     #for adstvar in AdstockVs:
     #    forAdstock[adstvar+'_stock']=0
     
-    #make dict of sub-DFs by all ID names except the last one, which better be time ID
-    #dictAdstockDFs=dict(tuple(forAdstock.groupby(IDnames[0:len(IDnames)-1])))
-    dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
-    
-    #apply adstocking to each sub-DF for each variable to be adstocked
-    for k in dictAdstockDFs.keys():
-        idxmin=dictAdstockDFs[k].index.values.min()
-        for adstvar in AdstockVs:
-            for i,row in dictAdstockDFs[k][adstvar].iteritems():
-                if i==idxmin: #first row is first wweek, needs special care
-                    #dictAdstockDFs[k].at[i,adstvar]=value
-                    oldvalue=0.0
-                    #print(k,i,oldvalue)
-                else:
-                    #print("start",i,dictAdstockDFs[k].loc[i,adstvar])
-                    dictAdstockDFs[k].at[i,adstvar]=pd.to_numeric(dictAdstockDFs[k].loc[i,adstvar])+retention*oldvalue
-                    oldvalue=dictAdstockDFs[k].loc[i,adstvar]
-                    #print("end",i,dictAdstockDFs[k].loc[i,adstvar])
-    #need to recombine them
-    datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
-    
+    # try adstocking, groupby used to adstock correctly by time
+    try:
+        dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
+        
+        #apply adstocking to each sub-DF for each variable to be adstocked
+        for k in dictAdstockDFs.keys():
+            idxmin=dictAdstockDFs[k].index.values.min()
+            for adstvar in AdstockVs:
+                for i,row in dictAdstockDFs[k][adstvar].iteritems():
+                    if i==idxmin: #first row is first wweek, needs special care
+                        #dictAdstockDFs[k].at[i,adstvar]=value
+                        oldvalue=0.0
+                        #print(k,i,oldvalue)
+                    else:
+                        #print("start",i,dictAdstockDFs[k].loc[i,adstvar])
+                        dictAdstockDFs[k].at[i,adstvar]=pd.to_numeric(dictAdstockDFs[k].loc[i,adstvar])+retention*oldvalue
+                        oldvalue=dictAdstockDFs[k].loc[i,adstvar]
+                        #print("end",i,dictAdstockDFs[k].loc[i,adstvar])
+        #need to recombine them
+        datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
+    except Exception as e:
+        print('Adstocking failure:' +  e)
     try:
         for v in (LogVs):
             datadf[v] = pd.to_numeric(datadf[v])#.apply(lambda x: value(x))
             datadf[v] = datadf[v].apply(lambda x: math.log(x))
     except Exception as e:
-        print(e)
+        print('after log transform' + e)
     #remember depMeans is after log transform, if any.  depMeans is in the modeled space
     depMeans=datadf.groupby(IDnames[0:len(IDnames)-1])[depV[0]].mean()
     #tackling mean center now;  first break into sub dfs again to mean cneter by id vars
     #have to rebuild the dict as the original df has changed
-    dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
-    for k in dictAdstockDFs.keys():
-        for vv in MCVs:
-            #in case not logged first, need to get to float
-            dictAdstockDFs[k][vv] = pd.to_numeric(dictAdstockDFs[k][vv])
-            dictAdstockDFs[k][vv]=dictAdstockDFs[k][vv]-dictAdstockDFs[k][vv].mean()
+    try:
+        dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
+        for k in dictAdstockDFs.keys():
+            for vv in MCVs:
+                #in case not logged first, need to get to float
+                dictAdstockDFs[k][vv] = pd.to_numeric(dictAdstockDFs[k][vv])
+                dictAdstockDFs[k][vv]=dictAdstockDFs[k][vv]-dictAdstockDFs[k][vv].mean()
 
-    #need to recombine them
-    datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
-    
+        #need to recombine them
+        datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
+    except Exception as e:
+        print('mean Centering Exception:' + e)
     #make dummies for all IDs other than time
     datadf=pd.get_dummies(datadf,columns=IDnames[0:len(IDnames)-1])#,drop_first=True)
     #need to put dummies in first columns and not last where they are put by the get_dummies() so duetos ordering is easy
@@ -154,17 +157,18 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
         X2[C]=pd.to_numeric(X1[C],errors='coerce')
     
     X1=X2.sort_index()
-    
-    #score to get transformed space decomps
-    modSpaceDecomp= intcoef*X1
-    #insert modeled target
-    modSpaceDecomp.insert(0,depV[0],value=Y1[depV].values)
-    #print(modSpaceDecomp.head())
-    #compute residual
-    modSpaceDecomp['total']=modSpaceDecomp.iloc[:,1:modSpaceDecomp.shape[1]].sum(axis=1)
-    modSpaceDecomp['residual']=modSpaceDecomp[depV[0]]-modSpaceDecomp['total']
-    modSpaceDecomp.drop('total',axis=1,inplace=True)
-    
+    try:
+        #score to get transformed space decomps
+        modSpaceDecomp= intcoef*X1
+        #insert modeled target
+        modSpaceDecomp.insert(0,depV[0],value=Y1[depV].values)
+        #print(modSpaceDecomp.head())
+        #compute residual
+        modSpaceDecomp['total']=modSpaceDecomp.iloc[:,1:modSpaceDecomp.shape[1]].sum(axis=1)
+        modSpaceDecomp['residual']=modSpaceDecomp[depV[0]]-modSpaceDecomp['total']
+        modSpaceDecomp.drop('total',axis=1,inplace=True)
+    except Exception as e:
+        print('Scoring Failure:'+ e)
     #bring it to original space
     #if transform was none or blank (na) then do nothing
     #if trasnform was log, then exponentiate
@@ -174,36 +178,38 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
     plainidx=arange(start=modSpaceDecomp.index.values.min(),stop=modSpaceDecomp.index.values.max()+1,dtype='int')
     
     #get a dict of transforms
-    transformsDict=transforms.to_dict()
-    if transformsDict[depV[0]]=='none':
-        origSpaceDecomp=modSpaceDecomp
-    elif transformsDict[depV[0]]=='log':
-        origSpaceDecomp=pd.DataFrame(0,index=plainidx,columns=modSpaceDecomp.columns.values)
-        for C in modSpaceDecomp:
-            origSpaceDecomp[C]=modSpaceDecomp[C].apply(lambda x:math.exp(x))
-    elif transformsDict[depV[0]]=='logmc':
-        origSpaceDecomp=pd.DataFrame(0,index=plainidx,columns=modSpaceDecomp.columns.values)
-        origSpaceDecomp=modSpaceDecomp #starting point is modspace, now add in mean values for depV
-        #make depMeans a DF
-        depMeans=pd.DataFrame(depMeans)
-        #reset index on decomp data frame for differencing
-        #first insert the columns back from rawdf
-        idCols=rawdf.loc[3:rawdf.shape[0],IDnames[0:len(IDnames)-1]]
-        origSpaceDecomp=origSpaceDecomp.join(idCols,how='outer')
-        origSpaceDecomp.set_index(keys=IDnames[0:len(IDnames)-1],inplace=True)
-        #make a dataframe with onecolumn
-        intOnesPlus=pd.DataFrame(origSpaceDecomp['intOnes']+depMeans[depV[0]],columns=['intOnes']).set_index(plainidx)
-        #drop the old column, insert the new column
-        origSpaceDecomp.drop('intOnes',axis=1,inplace=True)
-        origSpaceDecomp.insert(loc=0,column='intOnes',value=intOnesPlus.values)
-        origSpaceDecomp.set_index(keys=plainidx,inplace=True)
-        #that's a lot of fucking work to add in a column, finally apply the exp
-        #first drop depV[0] column, no one knows what it is at this point
-        origSpaceDecomp.drop(depV[0],axis=1,inplace=True)
-
-        for C in origSpaceDecomp:
-            origSpaceDecomp[C]=origSpaceDecomp[C].apply(lambda x:math.exp(x))
-       
+    try:
+        transformsDict=transforms.to_dict()
+        if transformsDict[depV[0]]=='none':
+            origSpaceDecomp=modSpaceDecomp
+        elif transformsDict[depV[0]]=='log':
+            origSpaceDecomp=pd.DataFrame(0,index=plainidx,columns=modSpaceDecomp.columns.values)
+            for C in modSpaceDecomp:
+                origSpaceDecomp[C]=modSpaceDecomp[C].apply(lambda x:math.exp(x))
+        elif transformsDict[depV[0]]=='logmc':
+            origSpaceDecomp=pd.DataFrame(0,index=plainidx,columns=modSpaceDecomp.columns.values)
+            origSpaceDecomp=modSpaceDecomp #starting point is modspace, now add in mean values for depV
+            #make depMeans a DF
+            depMeans=pd.DataFrame(depMeans)
+            #reset index on decomp data frame for differencing
+            #first insert the columns back from rawdf
+            idCols=rawdf.loc[3:rawdf.shape[0],IDnames[0:len(IDnames)-1]]
+            origSpaceDecomp=origSpaceDecomp.join(idCols,how='outer')
+            origSpaceDecomp.set_index(keys=IDnames[0:len(IDnames)-1],inplace=True)
+            #make a dataframe with onecolumn
+            intOnesPlus=pd.DataFrame(origSpaceDecomp['intOnes']+depMeans[depV[0]],columns=['intOnes']).set_index(plainidx)
+            #drop the old column, insert the new column
+            origSpaceDecomp.drop('intOnes',axis=1,inplace=True)
+            origSpaceDecomp.insert(loc=0,column='intOnes',value=intOnesPlus.values)
+            origSpaceDecomp.set_index(keys=plainidx,inplace=True)
+            #that's a lot of fucking work to add in a column, finally apply the exp
+            #first drop depV[0] column, no one knows what it is at this point
+            origSpaceDecomp.drop(depV[0],axis=1,inplace=True)
+    
+            for C in origSpaceDecomp:
+                origSpaceDecomp[C]=origSpaceDecomp[C].apply(lambda x:math.exp(x))
+    except Exception as e:
+        print('Reverse Transform Failure:' + e)
     #ok, we are done if additive model
     if transformsDict[depV[0]].startswith('log'):
         #if not additive, need to do column[2]*column[1]-column[1]=colum2decomp
