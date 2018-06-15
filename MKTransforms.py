@@ -24,8 +24,6 @@ def MKTransforms(rawdf):
         needForMCVs=[i for i, word in enumerate(transforms) if word.endswith('mc')]
         
         #get the data
-        
-        
         #pd.set_option('display.multi_sparse', False)
         #get the data
         #rawdf=pd.read_csv("C:/Users/TeamLorenzen/Documents/App0/static/downloads/ex.csv")
@@ -91,15 +89,15 @@ def MKTransforms(rawdf):
     #tackling mean center now;  first break into sub dfs again to mean cneter by id vars
     #have to rebuild the dict as the original df has changed
     try:
-        dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
-        for k in dictAdstockDFs.keys():
+        MeanDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
+        for k in MeanDFs.keys():
             for vv in MCVs:
                 #in case not logged first, need to get to float
-                dictAdstockDFs[k][vv] = pd.to_numeric(dictAdstockDFs[k][vv])
-                dictAdstockDFs[k][vv]=dictAdstockDFs[k][vv]-dictAdstockDFs[k][vv].mean()
+                MeanDFs[k][vv] = pd.to_numeric(MeanDFs[k][vv])
+                MeanDFs[k][vv]=MeanDFs[k][vv]-MeanDFs[k][vv].mean()
 
         #need to recombine them
-        datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
+        datadf=pd.concat(MeanDFs[k] for k in MeanDFs.keys())
     except Exception as e:
         print('mean Centering Exception:' + e)
     #make dummies for all IDs other than time
