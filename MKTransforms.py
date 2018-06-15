@@ -10,44 +10,41 @@ def MKTransforms(rawdf):
     #names of id columns, groups for decomps, transforms, knownsigns for models, original dep variable
     #and dataframe with only data that is transformed for modeling 
     """
-    try:
-        #control information referenced above
-        groups=rawdf.iloc[0,:]
-        transforms=rawdf.iloc[1,:]
-        knownSigns=rawdf.iloc[2,:]
-        
-        #some useful lists for dataframes below
-        needForAdstockVs=[i for i, word in enumerate(transforms) if word.startswith('adstock')]
-        needForAdstockIDs=[i for i,word in enumerate(groups) if word.endswith('id')]
-        needForAdstock=needForAdstockIDs + needForAdstockVs
-        needForLogVs = [i for i, word in enumerate(transforms) if word.startswith('log')]
-        needForMCVs=[i for i, word in enumerate(transforms) if word.endswith('mc')]
-        
-        #get the data
-        #pd.set_option('display.multi_sparse', False)
-        #get the data
-        #rawdf=pd.read_csv("C:/Users/TeamLorenzen/Documents/App0/static/downloads/ex.csv")
-        #make 4 dataframes (or series, I guess)
-        #1) series of groups for decomps from row 2
-        #2) series of transforms from row 3
-        #3) series of sign constraints from row 4
-        
-        #Most Df operations want column names -- so they are made in these lists
-        IDnames=rawdf.columns.values[needForAdstockIDs].tolist()
-        AdstockVs=rawdf.columns.values[needForAdstockVs].tolist()
-        LogVs=rawdf.columns.values[needForLogVs].tolist()
-        MCVs=rawdf.columns.values[needForMCVs].tolist()
-        #if time isn't the last id column then this sort will lead to bad adstock
-        rawdf.sort_values(by=IDnames)
-        
-        #get the data only frame, convert to floats when possible
-        datadf=rawdf.iloc[3:rawdf.shape[0],:]
-        #get original dependent in a dataframe to be returned for use in decomps
-        idxdep=[i for i,word in enumerate(groups) if word==('dependent')]
-        depV=rawdf.columns.values[idxdep].tolist()
-        origDep=datadf[depV]
-    except Exception as e:
-        print("in dataset up:" + e)
+    #control information referenced above
+    groups=rawdf.iloc[0,:]
+    transforms=rawdf.iloc[1,:]
+    knownSigns=rawdf.iloc[2,:]
+    
+    #some useful lists for dataframes below
+    needForAdstockVs=[i for i, word in enumerate(transforms) if word.startswith('adstock')]
+    needForAdstockIDs=[i for i,word in enumerate(groups) if word.endswith('id')]
+    needForAdstock=needForAdstockIDs + needForAdstockVs
+    needForLogVs = [i for i, word in enumerate(transforms) if word.startswith('log')]
+    needForMCVs=[i for i, word in enumerate(transforms) if word.endswith('mc')]
+    
+    #get the data
+    #pd.set_option('display.multi_sparse', False)
+    #get the data
+    #rawdf=pd.read_csv("C:/Users/TeamLorenzen/Documents/App0/static/downloads/ex.csv")
+    #make 4 dataframes (or series, I guess)
+    #1) series of groups for decomps from row 2
+    #2) series of transforms from row 3
+    #3) series of sign constraints from row 4
+    
+    #Most Df operations want column names -- so they are made in these lists
+    IDnames=rawdf.columns.values[needForAdstockIDs].tolist()
+    AdstockVs=rawdf.columns.values[needForAdstockVs].tolist()
+    LogVs=rawdf.columns.values[needForLogVs].tolist()
+    MCVs=rawdf.columns.values[needForMCVs].tolist()
+    #if time isn't the last id column then this sort will lead to bad adstock
+    rawdf.sort_values(by=IDnames)
+    
+    #get the data only frame, convert to floats when possible
+    datadf=rawdf.iloc[3:rawdf.shape[0],:]
+    #get original dependent in a dataframe to be returned for use in decomps
+    idxdep=[i for i,word in enumerate(groups) if word==('dependent')]
+    depV=rawdf.columns.values[idxdep].tolist()
+    origDep=datadf[depV]
     #Adstock transform -- everyone gets a .5 for now!
     retention=0.5
     #forAdstock=rawdf.iloc[3:rawdf.shape[0],needForAdstock]
@@ -57,49 +54,44 @@ def MKTransforms(rawdf):
     #    forAdstock[adstvar+'_stock']=0
     
     # try adstocking, groupby used to adstock correctly by time
-    try:
-        dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
-        
-        #apply adstocking to each sub-DF for each variable to be adstocked
-        for k in dictAdstockDFs.keys():
-            idxmin=dictAdstockDFs[k].index.values.min()
-            for adstvar in AdstockVs:
-                for i,row in dictAdstockDFs[k][adstvar].iteritems():
-                    if i==idxmin: #first row is first wweek, needs special care
-                        #dictAdstockDFs[k].at[i,adstvar]=value
-                        oldvalue=0.0
-                        #print(k,i,oldvalue)
-                    else:
-                        #print("start",i,dictAdstockDFs[k].loc[i,adstvar])
-                        dictAdstockDFs[k].at[i,adstvar]=pd.to_numeric(dictAdstockDFs[k].loc[i,adstvar])+retention*oldvalue
-                        oldvalue=dictAdstockDFs[k].loc[i,adstvar]
-                        #print("end",i,dictAdstockDFs[k].loc[i,adstvar])
-        #need to recombine them
-        datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
-    except Exception as e:
-        print('Adstocking failure:' +  e)
-    try:
-        for v in (LogVs):
-            datadf[v] = pd.to_numeric(datadf[v])#.apply(lambda x: value(x))
-            datadf[v] = datadf[v].apply(lambda x: math.log(x))
-    except Exception as e:
-        print('after log transform' + e)
+    dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
+    
+    #apply adstocking to each sub-DF for each variable to be adstocked
+    for k in dictAdstockDFs.keys():
+        idxmin=dictAdstockDFs[k].index.values.min()
+        for adstvar in AdstockVs:
+            for i,row in dictAdstockDFs[k][adstvar].iteritems():
+                if i==idxmin: #first row is first wweek, needs special care
+                    #dictAdstockDFs[k].at[i,adstvar]=value
+                    oldvalue=0.0
+                    #print(k,i,oldvalue)
+                else:
+                    #print("start",i,dictAdstockDFs[k].loc[i,adstvar])
+                    dictAdstockDFs[k].at[i,adstvar]=pd.to_numeric(dictAdstockDFs[k].loc[i,adstvar])+retention*oldvalue
+                    oldvalue=dictAdstockDFs[k].loc[i,adstvar]
+                    #print("end",i,dictAdstockDFs[k].loc[i,adstvar])
+    #need to recombine them
+    datadf=pd.concat(dictAdstockDFs[k] for k in dictAdstockDFs.keys())
+   
+    for v in (LogVs):
+        datadf[v] = pd.to_numeric(datadf[v])#.apply(lambda x: value(x))
+        datadf[v] = datadf[v].apply(lambda x: math.log(x))
+    
     #remember depMeans is after log transform, if any.  depMeans is in the modeled space
     depMeans=datadf.groupby(IDnames[0:len(IDnames)-1])[depV[0]].mean()
     #tackling mean center now;  first break into sub dfs again to mean cneter by id vars
     #have to rebuild the dict as the original df has changed
-    try:
-        MeanDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
-        for k in MeanDFs.keys():
-            for vv in MCVs:
-                #in case not logged first, need to get to float
-                MeanDFs[k][vv] = pd.to_numeric(MeanDFs[k][vv])
-                MeanDFs[k][vv]=MeanDFs[k][vv]-MeanDFs[k][vv].mean()
+    
+    MeanDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
+    for k in MeanDFs.keys():
+        for vv in MCVs:
+            #in case not logged first, need to get to float
+            MeanDFs[k][vv] = pd.to_numeric(MeanDFs[k][vv])
+            MeanDFs[k][vv]=MeanDFs[k][vv]-MeanDFs[k][vv].mean()
 
-        #need to recombine them
-        datadf=pd.concat(MeanDFs[k] for k in MeanDFs.keys())
-    except Exception as e:
-        print('mean Centering Exception:' + e)
+    #need to recombine them
+    datadf=pd.concat(MeanDFs[k] for k in MeanDFs.keys())
+    
     #make dummies for all IDs other than time
     datadf=pd.get_dummies(datadf,columns=IDnames[0:len(IDnames)-1])#,drop_first=True)
     #need to put dummies in first columns and not last where they are put by the get_dummies() so duetos ordering is easy
@@ -137,7 +129,6 @@ def runModels(depV,IDnames,groups, knownSigns, origDep,datadf):
 
     mod1.fit(X1,Y1)
 
-    #print(mod1.score(X1,Y1),"\n",mod1.coef_,"\n", mod1.intercept_)
     #combine intercept and coef
     #make int a 1D array of length 1:
     int=[mod1.intercept_]
