@@ -54,9 +54,9 @@ def MKTransforms(rawdf):
     #    forAdstock[adstvar+'_stock']=0
     
     # try adstocking, groupby used to adstock correctly by time
-    raise Exception('right before first groupby')
-    dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
     
+    dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
+    raise Exception('right after first groupby')
     #apply adstocking to each sub-DF for each variable to be adstocked
     for k in dictAdstockDFs.keys():
         idxmin=dictAdstockDFs[k].index.values.min()
