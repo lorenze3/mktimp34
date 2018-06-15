@@ -99,7 +99,7 @@ DELIMITER ;
     IN p_user_id VARCHAR(45)
 )
 BEGIN
-    IF ( select exists (select 1 from tbl_datafiles where user_id = p_user_id && data_filename= p_filename ) ) THEN
+    IF ( select exists (select 1 from tbl_datafiles where user_id = p_user_id && data_filename= p_filename && data_resultsname IS NOT NULL ) ) THEN
         select 'Existing Filename; Please rename.';
     ELSE
         insert into tbl_datafiles
