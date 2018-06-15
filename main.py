@@ -173,10 +173,10 @@ def userHome():
                 except Exception as e:
                     return render_template('error.html',error='csvread '+str(e))
                         #reate model data with user provied transforms
-                try:
-                    depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
-                except Exception as e:
-                    return render_template('error.html',error='mktransforms '+str(e))
+                #try:
+                depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
+                #except Exception as e:
+                    #return render_template('error.html',error='mktransforms '+str(e))
                         #run models and select best (altough first pass just runs one model, no sign constraint)
                 try:
                     intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
