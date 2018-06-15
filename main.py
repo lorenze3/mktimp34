@@ -157,70 +157,70 @@ def userHome():
         file = request.files['file']
         f_name = str(struid)+"_"+file.filename
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
-        #try:
-        conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
-                          host='127.0.0.1',port=55302,
-                              database='BucketList',autocommit=True)
-        cursor = conn.cursor()
-        cursor.callproc('sp_addinputD',(f_name,struid))
-        for rr in cursor.stored_results():
-            data=rr.fetchall()
-        if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
-            #success!
-            triggerModel=1
-            try:
-                rawdf=pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
-            except Exception as e:
-                return render_template('error.html',error='csvread '+str(e))
-                    #reate model data with user provied transforms
-            #try:
-            depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
-            #except Exception as e:
-                #return render_template('error.html',error='mktransforms '+str(e))
-                    #run models and select best (altough first pass just runs one model, no sign constraint)
-            try:
-                intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
-            except Exception as e:
-                return render_template('error.html',error='run models '+str(e))
-                    #create decomps
-            try:
-                origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
-            except Exception as e:
-                return render_template('error.html',error='decomp0 '+str(e))
-    				#group decomps
-            try:
-                groupedDecomp=MKTransforms.makeGroupedDecomp(origSpaceDecomp,groups,depV)
-            except Exception as e:
-                return render_template('error.html',error='Group Decomp '+str(e))#compute elasticites
-            try:
-                elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
-            except Exception as e:
-                return render_template('error.html',error='elast calc '+str(e))
-    				#make plotly dashboard
-            try:
-                figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
-            except Exception as e:
-                return render_template('error.html',error='create Dash '+str(e))
-    				#dump to json
-            try:
-                f_nameNoExt=os.path.splitext(f_name)[0]
-                jsonname=os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
-                plotly2json.plotlyfig2json(figAll, jsonname)
-                #tag it in database
-                cursor.callproc('sp_addresults',(jsonname,struid))
-                #need to learn how to get upload message on page while using the redirect to trigger the results
-                #return render_template('userHome.html',message= 'File Uploaded . . .Ingesting Data. . .')
-                return redirect(url_for('userHome',message='File Ingested Sucessfully'))
-            except Exception as e:
-                return render_template('error.html',error='saving json '+str(e))
-        else:
-            return render_template('userHome.html',message = 'Username already has a file of that name.')
-        #except Exception as e:
-            #return json.dumps({'error':str(e)})
-        #finally:
+        try:
+            conn = mysql.connector.connect(user='azure', password='6#vWHD_$',
+                              host='127.0.0.1',port=55302,
+                                  database='BucketList',autocommit=True)
+            cursor = conn.cursor()
+            cursor.callproc('sp_addinputD',(f_name,struid))
+            for rr in cursor.stored_results():
+                data=rr.fetchall()
+            if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
+                #success!
+                triggerModel=1
+                try:
+                    rawdf=pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
+                except Exception as e:
+                    return render_template('error.html',error='csvread '+str(e))
+                        #reate model data with user provied transforms
+                try:
+                    depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
+                except Exception as e:
+                    return render_template('error.html',error='mktransforms '+str(e))
+                        #run models and select best (altough first pass just runs one model, no sign constraint)
+                try:
+                    intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
+                except Exception as e:
+                    return render_template('error.html',error='run models '+str(e))
+                        #create decomps
+                try:
+                    origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
+                except Exception as e:
+                    return render_template('error.html',error='decomp0 '+str(e))
+        				#group decomps
+                try:
+                    groupedDecomp=MKTransforms.makeGroupedDecomp(origSpaceDecomp,groups,depV)
+                except Exception as e:
+                    return render_template('error.html',error='Group Decomp '+str(e))#compute elasticites
+                try:
+                    elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
+                except Exception as e:
+                    return render_template('error.html',error='elast calc '+str(e))
+        				#make plotly dashboard
+                try:
+                    figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
+                except Exception as e:
+                    return render_template('error.html',error='create Dash '+str(e))
+        				#dump to json
+                try:
+                    f_nameNoExt=os.path.splitext(f_name)[0]
+                    jsonname=os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
+                    plotly2json.plotlyfig2json(figAll, jsonname)
+                    #tag it in database
+                    cursor.callproc('sp_addresults',(jsonname,struid))
+                    #need to learn how to get upload message on page while using the redirect to trigger the results
+                    #return render_template('userHome.html',message= 'File Uploaded . . .Ingesting Data. . .')
+                    return redirect(url_for('userHome',message='File Ingested Sucessfully'))
+                except Exception as e:
+                    return render_template('error.html',error='saving json '+str(e))
+            else:
+                return render_template('userHome.html',message = 'Username already has a file of that name.')
+        except Exception as e:
+            return json.dumps({'error':str(e)})
+        finally:
             #close mysql connectino
-        cursor.close() 
-        conn.close()                
+            cursor.close() 
+            conn.close()                
 
 @app.route('/logout')
 def logout():
