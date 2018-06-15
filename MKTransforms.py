@@ -79,6 +79,7 @@ def MKTransforms(rawdf):
     
     #remember depMeans is after log transform, if any.  depMeans is in the modeled space
     depMeans=datadf.groupby(IDnames[0:len(IDnames)-1])[depV[0]].mean()
+    raise Exception('got to second groupby')
     #tackling mean center now;  first break into sub dfs again to mean cneter by id vars
     #have to rebuild the dict as the original df has changed
     
