@@ -52,7 +52,10 @@ def MKTransforms(rawdf):
     #make new vars as name+'_stock'
     #for adstvar in AdstockVs:
     #    forAdstock[adstvar+'_stock']=0
-    
+
+    #force depV to numeric; this generates warning    
+    for vv in [depV[0]]:
+        datadf[vv] = pd.to_numeric(datadf[vv])
     # try adstocking, groupby used to adstock correctly by time
     
     dictAdstockDFs=dict(tuple(datadf.groupby(IDnames[0:len(IDnames)-1])))
