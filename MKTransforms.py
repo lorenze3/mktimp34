@@ -234,7 +234,7 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
         #reverse transform Y1
         if transformsDict[depV[0]]=='log':
             origY1=Y1
-            origY1.apply(lambda x:math.exp(x))
+            origY1[depV[0]]=origY1[depV[0]].apply(lambda x:math.exp(pd.to_numeric(x)))
         elif transformsDict[depV[0]]=='logmc':
             origY1minus=Y1.join(idCols,how='outer')
             origY1minus.set_index(keys=IDnames[0:len(IDnames)-1],inplace=True)
