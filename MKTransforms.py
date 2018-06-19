@@ -158,7 +158,7 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
         #score to get transformed space decomps
         modSpaceDecomp= intcoef*X1
         #insert modeled target
-        modSpaceDecomp.insert(0,depV[0],value=Y1[depV].values)
+        modSpaceDecomp.insert(0,depV[0],value=Y1[depV[0]].values)
         #print(modSpaceDecomp.head())
         #compute residual
         modSpaceDecomp['total']=modSpaceDecomp.iloc[:,1:modSpaceDecomp.shape[1]].sum(axis=1)
