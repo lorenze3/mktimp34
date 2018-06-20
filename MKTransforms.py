@@ -148,6 +148,10 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
     import pandas as pd
     from numpy import arange, r_, reshape
     #append columns of 1s to data
+    try:
+        X1.drop('intOnes',axis=1)
+    except:
+        pass
     X1.insert(0,'intOnes',1.)
     X2=pd.DataFrame(0,index=X1.index.values,columns=X1.columns.values,dtype='float64')
     for C in X1:
@@ -158,7 +162,11 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
         #score to get transformed space decomps
         modSpaceDecomp= intcoef*X1
         #insert modeled target
-        modSpaceDecomp.insert(0,depV[0],value=Y1[depV[0]].values)
+        try:
+            modSpaceDecomp.drop(depV[0],axis=1)
+        except:
+            pass
+        modSpaceDecomp.insert(0,depV[0],value=Y1.values)
         #print(modSpaceDecomp.head())
         #compute residual
         modSpaceDecomp['total']=modSpaceDecomp.iloc[:,1:modSpaceDecomp.shape[1]].sum(axis=1)
@@ -242,7 +250,9 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
             origY1=pd.DataFrame(origY1minus[depV[0]]+depMeans[depV[0]],columns=[depV[0]]).set_index(plainidx)
             origY1[depV[0]]=origY1[depV[0]].apply(lambda x:math.exp(pd.to_numeric(x)))
         #now append the origY1[depV[0]]
-        origSpaceDecomp.insert(loc=0,column=depV[0],value=origY1[depV[0]].values)
+        
+        #origSpaceDecomp.drop(depV[0],axis=1)
+        #origSpaceDecomp.insert(loc=0,column=depV[0],value=origY1[depV[0]].values)
         origSpaceDecomp['total']=origSpaceDecomp.iloc[:,1:origSpaceDecomp.shape[1]].sum(axis=1)
         origSpaceDecomp['residual']=origSpaceDecomp[depV[0]]-origSpaceDecomp['total']
         origSpaceDecomp.drop('total',axis=1,inplace=True)
