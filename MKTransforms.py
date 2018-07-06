@@ -191,7 +191,7 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
             origSpaceDecomp=pd.DataFrame(0,index=plainidx,columns=modSpaceDecomp.columns.values)
             for C in modSpaceDecomp:
                 origSpaceDecomp[C]=modSpaceDecomp[C].apply(lambda x:math.exp(x))
-        elif transformsDict[depV[0]]=='logmc':
+        elif transformsDict[depV[0]].endswith('mc'):
             origSpaceDecomp=pd.DataFrame(0,index=plainidx,columns=modSpaceDecomp.columns.values)
             origSpaceDecomp=modSpaceDecomp #starting point is modspace, now add in mean values for depV
             #make depMeans a DF
@@ -210,9 +210,9 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
             #that's a lot of fucking work to add in a column, finally apply the exp
             #first drop depV[0] column, no one knows what it is at this point
             origSpaceDecomp.drop(depV[0],axis=1,inplace=True)
-    
-            for C in origSpaceDecomp:
-                origSpaceDecomp[C]=origSpaceDecomp[C].apply(lambda x:math.exp(x))
+            if transformsDict[depV[0]]=='logmc':
+                for C in origSpaceDecomp:
+                    origSpaceDecomp[C]=origSpaceDecomp[C].apply(lambda x:math.exp(x))
     except Exception as e:
         print('Reverse Transform Failure:' + e)
     #ok, we are done if additive model
@@ -249,15 +249,23 @@ def decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames):
             #make a dataframe with onecolumn
             origY1=pd.DataFrame(origY1minus[depV[0]]+depMeans[depV[0]],columns=[depV[0]]).set_index(plainidx)
             origY1[depV[0]]=origY1[depV[0]].apply(lambda x:math.exp(pd.to_numeric(x)))
+        elif transformsDict[depV[0]]=='mc':
+            origY1minus=Y1.join(idCols,how='outer')
+            origY1minus.set_index(keys=IDnames[0:len(IDnames)-1],inplace=True)
+            #make a dataframe with onecolumn
+            origY1=pd.DataFrame(origY1minus[depV[0]]+depMeans[depV[0]],columns=[depV[0]]).set_index(plainidx)
+        elif transformsDict[depV[0]]=='none':
+            origY1=Y1
         #now append the origY1[depV[0]]
         
         #origSpaceDecomp.drop(depV[0],axis=1)
         #origSpaceDecomp.insert(loc=0,column=depV[0],value=origY1[depV[0]].values)
+        origSpaceDecomp[depV[0]]=origY1
         origSpaceDecomp['total']=origSpaceDecomp.iloc[:,1:origSpaceDecomp.shape[1]].sum(axis=1)
         origSpaceDecomp['residual']=origSpaceDecomp[depV[0]]-origSpaceDecomp['total']
         origSpaceDecomp.drop('total',axis=1,inplace=True)
     return origSpaceDecomp,modSpaceDecomp
-
+    
 def makeGroupedDecomp(origSpaceDecomp,groups,depV):
     import pandas as pd
     from numpy import arange, r_, reshape
