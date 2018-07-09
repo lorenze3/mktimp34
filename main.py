@@ -168,11 +168,11 @@ def userHome():
             if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
                 #success!
                 triggerModel=1
-                try:
-                    rawdf=pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
-                except Exception as e:
-                    return render_template('error.html',error='csvread '+str(e))
-                        #reate model data with user provied transforms
+                #rawdf=pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
+                status, rawdf = MKTransforms.readChkDF(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
+                if len(status)>0:
+                    return render_template('error.html',error=status)
+                        #create model data with user provied transforms
                 try:
                     depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
                 except Exception as e:

@@ -103,6 +103,51 @@ def MKTransforms(rawdf):
                  
     return depMeans,depV,IDnames, groups, transforms,knownSigns, origDep,datadf
 
+def readChkDF(rawfile):
+    import pandas as pd
+    """
+    #force all control values to lower case
+    #replace all blanks in control rows with 'none'
+    #check for at least two id columns
+    #Check that tid is last id column
+    #check that second row is strings
+    #check that third row is stings 'none', 'mc', 'logmc', 'log','adstock'
+    #check that fourth row is +,-.none
+    #create a helpful, prescriptive status output for user if any check is violated
+    #output status='', string with length 0, if input is useable
+    """
+    rawdf=pd.read_csv(rawfile)
+    #push to lower case now
+    rawdf = rawdf.applymap(lambda s:s.lower() if type(s) == str else s)
+    #fill in NaN in the first 3 rows of the data frame with 'none'
+    for idx,row in rawdf.iterrows():
+        if idx<=2:
+            rawdf.iloc[idx,:]= rawdf.iloc[idx,:].fillna(value='none')
+    #initialize status as good
+    status=""
+    #strip off the values to be checked
+    groups=rawdf.iloc[0,:]
+    #print(groups)
+    transforms=rawdf.iloc[1,:]
+    knownSigns=rawdf.iloc[2,:]
+    #check on groups -- just look for IDs first
+    IDs=[word for i,word in enumerate(groups) if word.endswith('id')]
+    #print(IDs)
+    if len(IDs)<2:
+        status="Input Error: The second row is expected to define groups of variables.  It must have at least two ID groups defined; that is in the second row of the input file at least two columns must have a string ending in ID.  The last such column MUST have the value 'tid'"
+    elif not(set(["tid"]).issubset(groups)):
+        status="Input Error: The second row defines variable groups, including 'ID' groups which define dimensions.  the time ID, tid, is a REQUIRED group and is listed in the input file.  Please add it, or relabel the time dimension as 'tid' in the second row."
+    elif IDs[-1]!= "tid":
+        status="Input Error: The second row is expected to define groups of variables.  The last ID group MUST be 'tid' and it must represent the time dimension.  tid is not the right-most group ending with 'id' in the second row."
+    #now check on if aall transforms are allowed
+    if not(set(transforms).issubset(['none', 'logmc', 'mc','adstock','log'])):
+        status="Input Error: The third row should contain variable transformations.  The allowed transformations are: none, logmc, log, mc, adstock. A value other than these has been found."
+    #now check on if all sign constraints are allowed
+    if not(set(knownSigns).issubset(['+', '-', 'none'])):
+        status="Input Error: The fourth row should contain sign constraints.  The allowed constraints are none, +, -.  A value other than these has been found."
+    return status,rawdf
+    
+
 def runModels(depV,IDnames,groups, knownSigns, origDep,datadf):
     from sklearn import linear_model
     import pandas as pd
