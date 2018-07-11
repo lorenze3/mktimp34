@@ -53,6 +53,7 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
+
 #before it autoloads the example
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(

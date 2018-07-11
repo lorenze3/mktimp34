@@ -138,7 +138,7 @@ def readChkDF(rawfile):
     elif not(set(["tid"]).issubset(groups)):
         status="Input Error: The second row defines variable groups, including 'ID' groups which define dimensions.  the time ID, tid, is a REQUIRED group and is listed in the input file.  Please add it, or relabel the time dimension as 'tid' in the second row."
     elif IDs[-1]!= "tid":
-        status="Input Error: The second row is expected to define groups of variables.  The last ID group MUST be 'tid' and it must represent the time dimension.  tid is not the right-most group ending with 'id' in the second row."
+        status="Input Error: The second row is expected to define groups of variables.  The last ID group MUST be 'tid' and it must represent the time dimension.  'tid' is not the right-most group ending with 'id' in the second row."
     #now check on if aall transforms are allowed
     if not(set(transforms).issubset(['none', 'logmc', 'mc','adstock','log'])):
         status="Input Error: The third row should contain variable transformations.  The allowed transformations are: none, logmc, log, mc, adstock. A value other than these has been found."

@@ -11,8 +11,8 @@ import MKTransforms
 import numpy
 import pandas as pd
 import plotly2json
-import logging 
-from logging.handlers import RotatingFileHandler 
+import multiprocessing
+import modeldrone
 
 
 #create mailer object and go ahead and put in passwords for now . . .
@@ -167,52 +167,13 @@ def userHome():
                 data=rr.fetchall()
             if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
                 #success!
-                triggerModel=1
-                #rawdf=pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
-                status, rawdf = MKTransforms.readChkDF(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
-                if len(status)>0:
-                    return render_template('error.html',error=status)
-                        #create model data with user provied transforms
-                try:
-                    depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
-                except Exception as e:
-                    return render_template('error.html',error='mktransforms '+ str(e))
-                        #run models and select best (altough first pass just runs one model, no sign constraint)
-                try:
-                    intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
-                except Exception as e:
-                    return render_template('error.html',error='run models '+str(e))
-                        #create decomps
-                try:
-                    origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
-                except Exception as e:
-                    return render_template('error.html',error='decomp0 '+str(e))
-        				#group decomps
-                try:
-                    groupedDecomp=MKTransforms.makeGroupedDecomp(origSpaceDecomp,groups,depV)
-                except Exception as e:
-                    return render_template('error.html',error='Group Decomp '+str(e))#compute elasticites
-                try:
-                    elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
-                except Exception as e:
-                    return render_template('error.html',error='elast calc '+str(e))
-        				#make plotly dashboard
-                try:
-                    figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
-                except Exception as e:
-                    return render_template('error.html',error='create Dash '+str(e))
-        				#dump to json
-                try:
-                    f_nameNoExt=os.path.splitext(f_name)[0]
-                    jsonname=os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
-                    plotly2json.plotlyfig2json(figAll, jsonname)
-                    #tag it in database
-                    cursor.callproc('sp_addresults',(jsonname,struid))
-                    #need to learn how to get upload message on page while using the redirect to trigger the results
-                    #return render_template('userHome.html',message= 'File Uploaded . . .Ingesting Data. . .')
-                    return redirect(url_for('userHome',message='File Ingested Sucessfully'))
-                except Exception as e:
-                    return render_template('error.html',error='saving json '+str(e))
+                #add process to processing queue to run models
+                p = multiprocessing.Process(
+                                target=modeldrone.modeldrone,args=(f_name,)
+                                )
+                modelJobs.append(p)
+                p.start()
+            
             else:
                 return render_template('userHome.html',message = 'Username already has a file of that name.')
         except Exception as e:
@@ -261,6 +222,7 @@ def upload():
         return render_template('error.html',error='it worked')#json.dumps({'filename':f_name})
 
 if __name__ == "__main__":
+    modelJobs=[]
     app.run()
     
     
