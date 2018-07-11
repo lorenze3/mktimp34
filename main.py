@@ -170,11 +170,12 @@ def userHome():
                 #add process to processing queue to run models
                 try:
                     usethisfile=os.path.join(app.config['UPLOAD_FOLDER'], f_name)
-                    p = multiprocessing.Process(
-                                    target=modeldrone.modeldrone,args=(usethisfile,)
-                                    )
-                    modelJobs.append(p)
-                    p.start()
+                    #p = multiprocessing.Process(
+                    #                target=modeldrone.modeldrone,args=(usethisfile,)
+                    #                )
+                    #modelJobs.append(p)
+                    #p.start()
+                    modeldrone.modeldrone(usethisfile)
                 except Exception as e:
                     return json.dumps({'error in multiprocessing':str(e)})
             else:
