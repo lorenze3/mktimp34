@@ -7,6 +7,7 @@ Created on Sun Jun 10 10:35:00 2018
 
 def modeldrone(ff):    
     import MKTransforms
+    import mysql.connector
     import numpy as np
     import pandas as pd
     import ntpath as ntpath
@@ -20,7 +21,6 @@ def modeldrone(ff):
         return render_template('error.html',error=status)
     #f_name=ntpath.basename(ff)
     pathtosave,f_name=ntpath.split(ff)
-    print(f_name)
     depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
     intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
     origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
@@ -31,3 +31,5 @@ def modeldrone(ff):
     jsonname=ntpath.join(pathtosave, f_nameNoExt+'results.json')
     return render_template('error.html',error=f_nameNoExt+'results.json')
     plotly2json.plotlyfig2json(figAll, jsonname)
+    #tag it in database
+    cursor.callproc('sp_addresults',(jsonname,struid))

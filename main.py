@@ -168,16 +168,34 @@ def userHome():
             if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
                 #success!
                 #add process to processing queue to run models
-                try:
-                    usethisfile=os.path.join(app.config['UPLOAD_FOLDER'], f_name)
+               # try:
+                    #usethisfile=os.path.join(app.config['UPLOAD_FOLDER'], f_name)
                     #p = multiprocessing.Process(
                     #                target=modeldrone.modeldrone,args=(usethisfile,)
                     #                )
                     #modelJobs.append(p)
                     #p.start()
-                    modeldrone.modeldrone(usethisfile)
-                except Exception as e:
-                    return json.dumps({'error in multiprocessing':str(e)})
+                    
+                #except Exception as e:
+                    #return json.dumps({'error in multiprocessing':str(e)})
+                status, rawdf = MKTransforms.readChkDF(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
+                if len(status)>0:
+                    return render_template('error.html',error=status)
+                        #create model data with user provied transforms
+                depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
+                intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
+                origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
+                groupedDecomp=MKTransforms.makeGroupedDecomp(origSpaceDecomp,groups,depV)
+                elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
+                figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
+                f_nameNoExt=os.path.splitext(f_name)[0]
+                jsonname=os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
+                plotly2json.plotlyfig2json(figAll, jsonname)
+                #tag it in database
+                cursor.callproc('sp_addresults',(jsonname,struid))
+                #need to learn how to get upload message on page while using the redirect to trigger the results
+                #return render_template('userHome.html',message= 'File Uploaded . . .Ingesting Data. . .')
+                return redirect(url_for('userHome',message='File Ingested Sucessfully'))
             else:
                 return render_template('userHome.html',message = 'Username already has a file of that name.')
         except Exception as e:
