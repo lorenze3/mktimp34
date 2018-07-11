@@ -13,7 +13,7 @@ def modeldrone(ff):
     import os
     import plotly2json
     import plotly
-    from flask import Flask, render_template,
+    from flask import Flask, render_template
     
     status, rawdf = MKTransforms.readChkDF(ff)
     if len(status)>0:
