@@ -14,7 +14,7 @@ import plotly2json
 import multiprocessing
 import modeldrone
 
-
+modelJobs=[]
 #create mailer object and go ahead and put in passwords for now . . .
 
 m=Mailer.Mailer()
@@ -222,7 +222,6 @@ def upload():
         return render_template('error.html',error='it worked')#json.dumps({'filename':f_name})
 
 if __name__ == "__main__":
-    modelJobs=[]
     app.run()
     
     
