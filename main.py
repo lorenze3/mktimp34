@@ -169,7 +169,7 @@ def userHome():
                 #success!
                 #add process to processing queue to run models
                 p = multiprocessing.Process(
-                                target=modeldrone.modeldrone,args=(f_name,)
+                                target=modeldrone.modeldrone,args=(os.path.join(app.config['UPLOAD_FOLDER'], f_name),)
                                 )
                 modelJobs.append(p)
                 p.start()
