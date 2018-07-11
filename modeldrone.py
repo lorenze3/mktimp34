@@ -13,6 +13,8 @@ def modeldrone(ff):
     import os
     import plotly2json
     import plotly
+    from flask import Flask, render_template,
+    
     status, rawdf = MKTransforms.readChkDF(ff)
     if len(status)>0:
         return render_template('error.html',error=status)
@@ -26,5 +28,6 @@ def modeldrone(ff):
     elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
     figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
     f_nameNoExt=os.path.splitext(f_name)[0]
-    jsonname=os.path.join(pathtosave, f_nameNoExt+'results.json')#os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
+    jsonname=ntpath.join(pathtosave, f_nameNoExt+'results.json')
+     return render_template('error.html',error=f_nameNoExt+'results.json')
     plotly2json.plotlyfig2json(figAll, jsonname)
