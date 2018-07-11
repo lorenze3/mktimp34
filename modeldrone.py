@@ -14,8 +14,8 @@ def modeldrone(ff):
     import plotly2json
     import plotly
     status, rawdf = MKTransforms.readChkDF(ff)
-                if len(status)>0:
-                    return render_template('error.html',error=status)
+    if len(status)>0:
+        return render_template('error.html',error=status)
     #f_name=ntpath.basename(ff)
     pathtosave,f_name=ntpath.split(ff)
     print(f_name)
