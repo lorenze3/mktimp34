@@ -29,5 +29,5 @@ def modeldrone(ff):
     figAll=MKTransforms.createDash(groupedDecomp,IDnames,rawdf,groups,elasts,f_name)
     f_nameNoExt=os.path.splitext(f_name)[0]
     jsonname=ntpath.join(pathtosave, f_nameNoExt+'results.json')
-     return render_template('error.html',error=f_nameNoExt+'results.json')
+    return render_template('error.html',error=f_nameNoExt+'results.json')
     plotly2json.plotlyfig2json(figAll, jsonname)
