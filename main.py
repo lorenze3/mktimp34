@@ -168,12 +168,15 @@ def userHome():
             if not('data' in locals()) or data[0][0]!="Existing Filename; Please rename.":
                 #success!
                 #add process to processing queue to run models
-                p = multiprocessing.Process(
-                                target=modeldrone.modeldrone,args=(os.path.join(app.config['UPLOAD_FOLDER'], f_name),)
-                                )
-                modelJobs.append(p)
-                p.start()
-            
+                try:
+                    usethisfile=os.path.join(app.config['UPLOAD_FOLDER'], f_name)
+                    p = multiprocessing.Process(
+                                    target=modeldrone.modeldrone,args=(usethisfile,)
+                                    )
+                    modelJobs.append(p)
+                    p.start()
+                except Exception as e:
+                    return json.dumps({'error in multiprocessing':str(e)})
             else:
                 return render_template('userHome.html',message = 'Username already has a file of that name.')
         except Exception as e:

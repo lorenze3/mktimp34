@@ -28,4 +28,3 @@ def modeldrone(ff):
     f_nameNoExt=os.path.splitext(f_name)[0]
     jsonname=os.path.join(pathtosave, f_nameNoExt+'results.json')#os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
     plotly2json.plotlyfig2json(figAll, jsonname)
-    return 0
