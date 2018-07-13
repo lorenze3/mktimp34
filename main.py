@@ -183,7 +183,8 @@ def userHome():
                     return render_template('error.html',error=status)
                         #create model data with user provied transforms
                 depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
-                intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
+                #intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
+                optmsg, intcoef, X1, Y1=runConstrainedModels(depV,IDnames,groups,knownSigns,origDep,datadf)
                 origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
                 groupedDecomp=MKTransforms.makeGroupedDecomp(origSpaceDecomp,groups,depV)
                 elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
@@ -195,7 +196,7 @@ def userHome():
                 cursor.callproc('sp_addresults',(jsonname,struid))
                 #need to learn how to get upload message on page while using the redirect to trigger the results
                 #return render_template('userHome.html',message= 'File Uploaded . . .Ingesting Data. . .')
-                return redirect(url_for('userHome',message='File Ingested Sucessfully'))
+                return redirect(url_for('userHome',message='File Ingested Sucessfully '+optmsg))
             else:
                 return render_template('userHome.html',message = 'Username already has a file of that name.')
         except Exception as e:

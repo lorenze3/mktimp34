@@ -206,7 +206,7 @@ def runConstrainedModels(depV,IDnames,groups,knownSigns,origDep,datadf):
     intzero=np.array(0.)
     intcoef=np.hstack((intzero,res['x']))
 
-    return res['message'],intcoef
+    return res['message'],intcoef,X1,Y1
 
 def runModels(depV,IDnames,groups, knownSigns, origDep,datadf):
     from sklearn import linear_model
