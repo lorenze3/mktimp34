@@ -147,6 +147,66 @@ def readChkDF(rawfile):
         status="Input Error: The fourth row should contain sign constraints.  The allowed constraints are none, +, -.  A value other than these has been found."
     return status,rawdf
     
+def runConstrainedModels(depV,IDnames,groups,knownSigns,origDep,datadf):
+    """
+    Tested to match (approximately) the linear results.  This function uses L2 regularization and constrained
+    Quadratic programming to give us some mc protection and active sign constraints
+    """
+    from scipy import optimize
+    import pandas as pd
+    import numpy as np
+    
+    #create dependent and indepdendent dataframes
+    notDepV=[w for w in datadf.columns.values.tolist() if (w not in depV and w not in IDnames )]#if  word not in notIndList]
+    
+    Y1=datadf[depV]
+    X1=datadf[notDepV]
+      
+    #order isn't preserved above; need to rearrange for comparing coefficients
+    cols=[]
+    cols.append([C for C in X1.columns.values if C.startswith(tuple(IDnames[0:len(IDnames)-1]))])
+    cols.append([C for C in X1.columns.values if not(C.startswith(tuple(IDnames[0:len(IDnames)-1])))])
+    cols = [item for sublist in cols for item in sublist]
+    newcolorder=[]
+    for word in cols:
+        if word not in newcolorder:
+             newcolorder.append(word)
+    
+    #print(newcolorder)   
+   
+    X1= X1.reindex(columns=newcolorder)
+    
+    #need to define the function to minmize
+    #use sum of squares plus small value times sum of magnitude^2  of coefs (i.e. L2 regularization)
+    def cost1(betas,regwt=1):
+        arrayind=X1.astype(np.float).values
+        arraydep=Y1.values.reshape(-1)
+        err=arraydep-np.dot(arrayind,betas)
+        sse=np.sum(err**2)
+        L2norm=np.sum(betas**2)
+        #print(sse+L2norm*regwt)
+        return sse+L2norm*regwt
+    #initial guess
+    init=np.zeros(X1.shape[1])
+    #construct bounds based on knownSigns
+    bnds=[]
+    for vv in X1:
+        try:
+            if knownSigns.to_dict()[vv] == 'none':
+                bnds.append((None,None))
+            elif knownSigns.to_dict()[vv] == '+':
+                bnds.append((0,None))
+            elif knownSigns.to_dict()[vv] == '-':
+                bnds.append((None,0))
+        except:
+            bnds.append((None,None))
+        
+    res= optimize.minimize(cost1,init,args=(),method='SLSQP', jac=None, hess=None, hessp=None, bounds=np.asarray(bnds))
+    #need to prepend 0 intercept to match expected situation in decomp function
+    intzero=np.array(0.)
+    intcoef=np.hstack((intzero,res['x']))
+
+    return res['message'],intcoef
 
 def runModels(depV,IDnames,groups, knownSigns, origDep,datadf):
     from sklearn import linear_model
