@@ -184,7 +184,7 @@ def userHome():
                         #create model data with user provied transforms
                 depMeans,depV,IDnames, groups, transforms, knownSigns, origDep,datadf=MKTransforms.MKTransforms(rawdf)
                 #intcoef, X1, Y1 =MKTransforms.runModels(depV,IDnames,groups, knownSigns, origDep,datadf)
-                optmsg, intcoef, X1, Y1=runConstrainedModels(depV,IDnames,groups,knownSigns,origDep,datadf)
+                optmsg, intcoef, X1, Y1=MKTransforms.runConstrainedModels(depV,IDnames,groups,knownSigns,origDep,datadf)
                 origSpaceDecomp,modSpaceDecomp, =MKTransforms.decomp0(X1,Y1,origDep,intcoef,depV,depMeans,transforms,rawdf,IDnames)
                 groupedDecomp=MKTransforms.makeGroupedDecomp(origSpaceDecomp,groups,depV)
                 elasts=MKTransforms.calcElast(intcoef,X1,IDnames,groups, transforms)
