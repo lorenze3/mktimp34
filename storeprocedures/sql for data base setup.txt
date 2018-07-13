@@ -122,13 +122,14 @@ DELIMITER;
  DELIMITER $$
  CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addresults`(
     IN p_jsonname VARCHAR(700),
-    IN p_user_id VARCHAR(45)
+    IN p_user_id VARCHAR(45),
+	IN p_filename VARCHAR(500)
 )
 BEGIN
 	update tbl_datafiles
 		set data_resultsname=p_jsonname,
 				data_ts = NOW()
-		where user_id=p_user_id;
+		where user_id=p_user_id and data_filename=p_filename;
 END $$
 DELIMITER;
 

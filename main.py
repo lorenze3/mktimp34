@@ -193,7 +193,7 @@ def userHome():
                 jsonname=os.path.join(app.config['UPLOAD_FOLDER'], f_nameNoExt+'results.json')
                 plotly2json.plotlyfig2json(figAll, jsonname)
                 #tag it in database
-                cursor.callproc('sp_addresults',(jsonname,struid))
+                cursor.callproc('sp_addresults',(jsonname,struid,f_name))
                 #need to learn how to get upload message on page while using the redirect to trigger the results
                 #return render_template('userHome.html',message= 'File Uploaded . . .Ingesting Data. . .')
                 return redirect(url_for('userHome',message='File Ingested Sucessfully '+optmsg))
